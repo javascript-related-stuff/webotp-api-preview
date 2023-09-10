@@ -1,0 +1,79 @@
+<html lang=en>
+
+<head>
+    <title>WebOTP API Preview</title>
+    <meta charset=UTF-8>
+    <meta content="width=device-width,initial-scale=1.0" name=viewport>
+
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        if ('OTPCredential' in window) {
+        window.addEventListener('DOMContentLoaded', e => {
+            const input = document.querySelector('input[autocomplete="one-time-code"]');
+            if (!input) return;
+            const ac = new AbortController();
+            const form = input.closest('form');
+            if (form) {
+            form.addEventListener('submit', e => {
+                ac.abort();
+            });
+            }
+            navigator.credentials.get({
+            otp: { transport:['sms'] },
+            signal: ac.signal
+            }).then(otp => {
+            console.log("OTP Captured as: ", otp)
+            input.value = otp.code;
+            }).catch(err => {
+            console.log(err);
+            });
+        });
+        }
+    </script>
+
+    <style>
+        input {
+            padding: 4px;
+        }
+
+        .dark-button {
+            background-color: black;
+            color: white;
+        }
+
+        .dark-button:hover {
+            color: black;
+            background-color: white;
+            cursor: pointer;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>Web OTP API Implementation</h1>
+
+    <form>
+        <input autocomplete="one-time-code" required/>
+        <input class="dark-button" type="submit">
+    </form>
+
+    <div>
+        <h4>Send below message to your mobile number:</h4>
+
+        <pre>
+Do not share this with anyone.
+OTP:9999
+@webotp-api-preview.s3.eu-north-1.amazonaws.com #9999
+        </pre>
+
+        <p>You can edit the host as per the requirements.</p>
+    </div>
+
+
+</body>
+
+
+</html>
